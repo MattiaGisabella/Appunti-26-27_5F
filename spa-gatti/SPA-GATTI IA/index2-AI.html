@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat SPA — Dashboard Gatti</title>
+    <!-- Font e Icone -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --text-color: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .img-container {
+            width: 100%;
+            height: 320px;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.2);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+        }
+
+        .spinner {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent-pink);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-purple), #6366f1);
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--accent-pink), #f43f5e);
+            color: #fff;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .gallery-section {
+            width: 100%;
+            max-width: 900px;
+            margin-top: 40px;
+        }
+
+        .gallery-section h2 {
+            font-size: 1.4rem;
+            margin-bottom: 16px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 16px;
+        }
+
+        .gallery-item {
+            position: relative;
+            height: 130px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .gallery-item:hover .delete-btn {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><i class="fa-solid => fa-cat"></i> Cat Discovery</h1>
+        <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 5px;">Genera e colleziona i migliori gatti del web</p>
+    </header>
+
+    <main class="main-card">
+        <div class="img-container">
+            <div id="spinner" class="spinner"></div>
+            <img id="gatto-img" src="" alt="Gatto" style="opacity: 0;">
+        </div>
+
+        <div class="controls">
+            <button id="nuovo-gatto" class="btn btn-primary">
+                <i class="fa-solid fa-dice"></i> Nuovo
+            </button>
+            <button id="salva-gatto" class="btn btn-secondary">
+                <i class="fa-solid fa-bookmark"></i> Salva
+            </button>
+        </div>
+    </main>
+
+    <section class="gallery-section">
+        <h2>La tua collezione</h2>
+        <div id="gatti-salvati" class="gallery-grid"></div>
+    </section>
+
+    <script>
+        const API_BACKEND = "http://localhost:3000/api/cats";
+        const imgTag = document.getElementById("gatto-img");
+        const spinner = document.getElementById("spinner");
+        const btnNuovo = document.getElementById("nuovo-gatto");
+        const btnSalva = document.getElementById("salva-gatto");
+        const gattiSalvatiContainer = document.getElementById("gatti-salvati");
+
+        // Carica un gatto da Cataas API
+        async function getCat() {
+            imgTag.style.opacity = "0.3";
+            spinner.style.display = "block";
+            btnNuovo.disabled = true;
+
+            const url = `https://cataas.com/cat?json=true&timestamp=${Date.now()}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                // Gestione URL completo
+                const catImageUrl = data.url.startsWith("http") 
+                    ? data.url 
+                    : `https://cataas.com${data.url}`;
+
+                imgTag.src = catImageUrl;
+                imgTag.onload = () => {
+                    spinner.style.display = "none";
+                    imgTag.style.opacity = "1";
+                    btnNuovo.disabled = false;
+                };
+            } catch (e) {
+                console.error("Errore nel caricamento:", e);
+                spinner.style.display = "none";
+                btnNuovo.disabled = false;
+            }
+        }
+
+        // Recupera la lista di gatti dal Backend Node.js
+        async function loadSavedCats() {
+            try {
+                const res = await fetch(API_BACKEND);
+                const result = await res.json();
+                if (result.success) {
+                    renderGallery(result.data);
+                }
+            } catch (e) {
+                console.warn("Backend non raggiungibile. Modalità offline attiva.");
+            }
+        }
+
+        // Salva l'immagine corrente nel Backend
+        async function saveCat() {
+            if (!imgTag.src) return;
+
+            try {
+                const res = await fetch(API_BACKEND, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ url: imgTag.src })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    loadSavedCats();
+                }
+            } catch (e) {
+                console.error("Errore durante il salvataggio:", e);
+            }
+        }
+
+        // Elimina un gatto dal Backend
+        async function deleteCat(id) {
+            try {
+                const res = await fetch(`${API_BACKEND}/${id}`, { method: "DELETE" });
+                const result = await res.json();
+                if (result.success) {
+                    loadSavedCats();
+                }
+            } catch (e) {
+                console.error("Errore durante l'eliminazione:", e);
+            }
+        }
+
+        // Renderizza la griglia
+        function renderGallery(cats) {
+            gattiSalvatiContainer.innerHTML = "";
+            cats.forEach(cat => {
+                const item = document.createElement("div");
+                item.className = "gallery-item";
+                item.innerHTML = `
+                    <img src="${cat.url}" alt="Gatto Salvato">
+                    <button class="delete-btn" onclick="deleteCat(${cat.id})">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                `;
+                gattiSalvatiContainer.appendChild(item);
+            });
+        }
+
+        // Event Listener
+        btnNuovo.addEventListener("click", getCat);
+        btnSalva.addEventListener("click", saveCat);
+
+        // Inizializzazione
+        getCat();
+        loadSavedCats();
+    </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <title>SPA Gatti</title>
+
+        <style>
+            body {
+                padding: 20px;
+                text-align: center;
+            }
+
+            img {
+                max-width: 70%;
+            }
+
+            #gatti-salvati {
+                border: 5px solid black;
+                padding: 20px;
+
+                display: flex;
+                justify-content: space-around;
+                flex-wrap: wrap;
+            }
+
+            #gatti-salvati img {
+                height: 100px;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <div>
+            <button id = "nuovo-gatto">Nuovo Gatto</button>
+            <button id = "salva-gatto">Salva Gatto</button>
+        </div>
+
+
+        <img id = "gatto-img" src = "" alt = "">
+
+        <div id ="gatti-salvati">
+
+        </div>
+        
+
+        <script>
+            const imgTag = document.getElementById("gatto-img");
+            const bottone = document.getElementById("nuovo-gatto");
+
+            bottone.addEventListener("click" , () => getCat());
+
+            const gattiSalvati = document.getElementById("gatti-salvati");
+            const salva = document.getElementById("salva-gatto");
+            salva.addEventListener("click" , () => {
+                const newImg = document.createElement("img");
+                newImg.src = imgTag.src;
+                gattiSalvati.appendChild(newImg);
+            });
+
+            async function getCat() {
+                //const url = "https://cataas.com/cat/gif";
+                const url = "https://cataas.com/cat?json=true";
+                try {
+                    const response = await fetch(url);      // MANDA UNA RICHIESTA HTTP GET ALL'URL
+                    console.log("RISPOSTA" , response);
+                    const data = await response.json();     //ESTRAE I DATI JSON DALLA RISPOSTA
+                    console.log("DATI" , data.url);
+                    imgTag.src = data.url;
+                } catch(e){
+                    console.log("ERRORE" , e.message);
+                }
+            }
+            getCat();
+
+        </script>
+    </body>
+
+</html>
